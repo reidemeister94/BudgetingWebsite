@@ -1,9 +1,16 @@
-import sqlite3
-from flask import Flask, jsonify, request
+import os
+from datetime import timedelta
+from flask import (
+    Flask,
+    jsonify,
+    request,
+    session,
+    render_template_string,
+    redirect,
+    url_for,
+)
 from flask_cors import CORS
 import uuid
-
-from werkzeug.wrappers import response
 from db.db_handler import DBHandler
 
 # configuration
@@ -13,11 +20,22 @@ DEBUG = True
 # instantiate the app
 app = Flask(__name__)
 app.config.from_object(__name__)
+app.secret_key = os.environ["finance_app_secret_key"]
+# enable CORS
+CORS(app, resources={r"/*": {"origins": "*"}})
+
 db_handler = DBHandler()
 
 
-# enable CORS
-CORS(app, resources={r"/*": {"origins": "*"}})
+@app.route("/set/")
+def set():
+    session["key"] = "value"
+    return "ok"
+
+
+@app.route("/get/")
+def get():
+    return session.get("key", "not set")
 
 
 # # sanity check route

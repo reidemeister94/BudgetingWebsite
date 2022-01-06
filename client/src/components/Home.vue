@@ -1,13 +1,11 @@
 <template>
   <div class='container'>
-    <ul id="example-1">
-      <li
+    <b-list-group>
+      <b-list-group-item
         v-for="user in users"
         :key="user.username"
-      >
-        {{ user.username }}
-      </li>
-    </ul>
+      >{{ user.username }}</b-list-group-item>
+    </b-list-group>
   </div>
 </template>
 <script>

@@ -27,7 +27,7 @@ class DBHandler:
         cursor = connection.cursor()
         rows = cursor.execute(f"SELECT * FROM {table_name}").fetchall()
         # rows = cursor.execute("SELECT * FROM user").fetchall()
-        print("ROWS")
-        print(rows)
-        print("=" * 75)
+        # print("ROWS")
+        # print(rows)
+        # print("=" * 75)
         return rows
