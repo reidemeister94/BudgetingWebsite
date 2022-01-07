@@ -13,11 +13,12 @@ export default {
             try {
                 //decode token here and attach to the user object
                 let decoded_jwt = VueJwtDecode.decode(token);
+                // console.log("DECODED JWT: " + JSON.stringify(decoded_jwt));
                 this.username = decoded_jwt.username;
-                console.log(JSON.stringify(this.username));
+                // console.log("DECODED USERNAME: " + JSON.stringify(this.username));
             } catch (error) {
                 // return error in production env
-                console.log(error, 'Error decoding token');
+                // console.log(error, 'Error decoding token');
             }
         },
         logUserOut() {
