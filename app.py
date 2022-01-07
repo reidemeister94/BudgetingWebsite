@@ -2,6 +2,7 @@ import os
 from datetime import timedelta
 from flask import (
     Flask,
+    json,
     jsonify,
     request,
     session,
@@ -9,6 +10,11 @@ from flask import (
     redirect,
     url_for,
 )
+
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 import uuid
 from db.db_handler import DBHandler
@@ -21,36 +27,49 @@ DEBUG = True
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.secret_key = os.environ["finance_app_secret_key"]
+jwt = JWTManager(app)
 # enable CORS
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 db_handler = DBHandler()
 
 
-@app.route("/set/")
-def set():
-    session["key"] = "value"
-    return "ok"
-
-
-@app.route("/get/")
-def get():
-    return session.get("key", "not set")
-
-
-# # sanity check route
-# @app.route("/ping", methods=["GET"])
-# def ping_pong():
-#     return jsonify("pong!")
+# @app.route("/", methods=["GET"])
+# def home():
+#     response_object = {"status": "success"}
+#     db_conn = db_handler.get_db_connection()
+#     users = db_handler.get_all_elements_from_table(db_conn, "user")
+#     response_object["users"] = users
+#     return jsonify(response_object)
+@app.route("/dashboard", methods=["GET"])
+@jwt_required()
+def dashboard():
+    return jsonify({"msg": "logged"})
 
 
 @app.route("/", methods=["GET"])
-def home():
-    response_object = {"status": "success"}
-    db_conn = db_handler.get_db_connection()
-    users = db_handler.get_all_elements_from_table(db_conn, "user")
-    response_object["users"] = users
-    return jsonify(response_object)
+@jwt_required(optional=True)
+def optionally_protected():
+    current_identity = get_jwt_identity()
+    if current_identity:
+        return jsonify({"msg": "logged"})
+    else:
+        return jsonify({"msg": "not logged"})
+
+
+# Create a route to authenticate your users and return JWTs. The
+# create_access_token() function is used to actually generate the JWT.
+@app.route("/login", methods=["POST"])
+def login():
+    print(request.json)
+    username = request.json.get("username", None)
+    password = request.json.get("password", None)
+
+    if username != "test" or password != "test":
+        return jsonify({"msg": "Bad username or password"}), 401
+
+    access_token = create_access_token(identity=username)
+    return jsonify(access_token=access_token)
 
 
 # @app.route("/books", methods=["GET", "POST"])
