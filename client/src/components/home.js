@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Alert from './Alert.vue';
+import common from './common.js';
 export default {
     name: 'Home',
     data() {
@@ -19,46 +20,8 @@ export default {
         alert: Alert,
     },
     methods: {
-        getStorageUserToken() {
-            let token = localStorage.getItem('user');
-            // console.log('TOKEN IN STORAGE: ' + JSON.stringify(token))
-            if (token == null) {
-                return "undefined"
-            } else {
-                return token
-            }
-        },
-        setStorageUserToken(user_token) {
-            localStorage.setItem("user", user_token);
-        },
-        getLoggedStatus() {
-            var token = this.getStorageUserToken()
-                // console.log("TOKEN " + JSON.stringify(token))
-                // console.log(token == "undefined")
-            if (token != "undefined") {
-                this.request_config = {
-                    headers: { Authorization: `Bearer ${token}` },
-                };
-            }
-            const path = 'http://localhost:4794/';
-            axios
-                .get(path, this.request_config)
-                .then((res) => {
-                    this.data = res.data.msg;
-                    // console.log(JSON.stringify(this.data));
-                    if (this.data == 'logged') {
-                        // console.log('Setting token to storage:');
-                        // console.log(JSON.stringify(this.access_token));
-                        // this.setStorageUserToken(this.access_token);
-                        // navigate to a protected resource
-                        this.$router.push("/dashboard");
-                    }
-
-                })
-                .catch((error) => {
-                    // eslint-disable-next-line
-                    console.error(error);
-                });
+        register() {
+            this.$router.push('/register');
         },
         login(payload) {
             const path = 'http://localhost:4794/login';
@@ -70,14 +33,15 @@ export default {
                     // console.log('='.repeat(75));
                     if (res.status == 200 && 'access_token' in res.data) {
                         // console.log(JSON.stringify(res.status));
-                        this.login_data = res.data;
-                        this.access_token = this.login_data.access_token;
-                        this.request_config = {
-                            headers: { Authorization: `Bearer ${this.access_token}` },
-                        };
-                        this.setStorageUserToken(this.access_token)
+                        // this.login_data = res.data;
+                        this.access_token = res.data.access_token;
+                        // this.request_config = {
+                        //     headers: { Authorization: `Bearer ${this.access_token}` },
+                        // };
+                        common.setStorageUserToken(this.access_token)
+                        this.$router.push('/dashboard')
                     }
-                    this.getLoggedStatus();
+                    // this.getLoggedStatus();
                 })
                 .catch((error) => {
                     // eslint-disable-next-line
@@ -124,6 +88,10 @@ export default {
         },
     },
     created() {
-        this.getLoggedStatus();
+        var userLogged = common.checkUserLogged();
+        // console.log(JSON.stringify('HOME - USER LOGGED: ' + userLogged))
+        if (userLogged) {
+            this.$router.push('/dashboard')
+        }
     },
 };

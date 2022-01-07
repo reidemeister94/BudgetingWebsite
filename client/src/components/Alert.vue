@@ -15,7 +15,17 @@ export default {
   name: 'Alert',
   computed: {
     alertVariant() {
-      return this.message.toLowerCase().includes('wrong') ? 'danger' : success;
+      var message = this.message.toLowerCase();
+      if (message.includes('wrong')) {
+        return 'danger';
+      } else if (
+        message.includes('user already') ||
+        message.includes('check format')
+      ) {
+        return 'warning';
+      } else {
+        return 'success';
+      }
     },
   },
 };

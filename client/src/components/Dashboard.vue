@@ -10,7 +10,6 @@
         You are currently viewing the Vue_JWT_App
       </b-navbar-brand>
       <b-navbar-nav class="ml-auto">
-        <b-nav-text>{{ user.firstname }} | </b-nav-text>
         <b-nav-item
           @click="logUserOut"
           active

@@ -6,10 +6,7 @@
           class="card px-5 py-4"
           id="form1"
         >
-          <div
-            class="form-data"
-            v-if="!submitted"
-          >
+          <div class="form-data">
             <div class="text-center mb-4">
               <h4>Register Now</h4>
             </div>
@@ -27,18 +24,44 @@
                 v-bind:class="{'form-control':true, 'is-invalid' : !validPassword(password) && passwordBlured}"
                 v-on:blur="passwordBlured = true"
               >
-              <div class="invalid-feedback">Password must be 8 character!</div>
+              <div class="invalid-feedback">Password must be 4 character!</div>
             </div>
-            <div class="mb-3"> <button
-                v-on:click.stop.prevent="submit"
-                class="btn btn-dark w-100"
-              >Register</button> </div>
-          </div>
-          <div
-            class="success-data"
-            v-else
-          >
-            <div class="text-center d-flex flex-column"> <i class='bx bxs-badge-check'></i> <span class="text-center fs-3">Your has been created <br> Successfully</span> </div>
+            <div class="mb-3">
+              <b-row
+                class="mb-3 text-center"
+                align-h="center"
+              > <button
+                  v-on:click.stop.prevent="submit"
+                  class="btn btn-dark w-50"
+                >Register</button></b-row>
+              <b-row
+                class="mb-3 text-center"
+                align-h="center"
+              >
+                <alert
+                  :message='msg_user_exists'
+                  v-if='user_already_exists'
+                ></alert>
+              </b-row>
+              <b-row
+                class="mb-3 text-center"
+                align-h="center"
+              >
+                <alert
+                  :message='msg_invalid_fields'
+                  v-if='invalid_fields'
+                ></alert>
+              </b-row>
+              <b-row
+                class="mb-3 text-center"
+                align-h="center"
+              >
+                <alert
+                  :message='msg_smth_wrong'
+                  v-if='smth_wrong'
+                ></alert>
+              </b-row>
+            </div>
           </div>
         </div>
       </div>

@@ -29,10 +29,25 @@
               >
               <div class="invalid-feedback">Password must be at least 4 characters!</div>
             </div>
-            <div class="mb-3"> <button
+            <b-row
+              class="mb-2"
+              align-h="center"
+            >
+              <button
                 v-on:click.stop.prevent="submit"
-                class="btn btn-dark w-100"
-              >Login</button> </div>
+                class="btn btn-dark w-50"
+              >Login</button>
+            </b-row>
+
+            <b-row
+              class="mb-3 text-center"
+              align-h="center"
+            >
+              <button
+                v-on:click.stop.prevent="register"
+                class="btn btn-dark w-50"
+              >Register</button>
+            </b-row>
           </div>
           <alert
             :message='message'

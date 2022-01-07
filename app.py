@@ -61,17 +61,31 @@ def optionally_protected():
 # create_access_token() function is used to actually generate the JWT.
 @app.route("/login", methods=["POST"])
 def login():
-    print(request.json)
     username = request.json.get("username", None)
     password = request.json.get("password", None)
-
-    if username != "test" or password != "test":
-        return jsonify({"msg": "Bad username or password"}), 401
-
+    db_conn = db_handler.get_db_connection()
+    user_exists = db_handler.check_credentials(db_conn, username, password)
+    if not user_exists:
+        return jsonify({"msg": "bad username or password"}), 401
     additional_claims = {"username": username}
     access_token = create_access_token(username, additional_claims=additional_claims)
-
     return jsonify(access_token=access_token)
+
+
+@app.route("/register", methods=["POST"])
+def register():
+    username = request.json.get("username", None)
+    password = request.json.get("password", None)
+    user_exists = db_handler.check_user_exists(username)
+    if user_exists:
+        return jsonify({"msg": "user already exists"})
+    else:
+        db_handler.add_user_to_db(username, password)
+        additional_claims = {"username": username}
+        access_token = create_access_token(
+            username, additional_claims=additional_claims
+        )
+        return jsonify(access_token=access_token)
 
 
 # @app.route("/books", methods=["GET", "POST"])
