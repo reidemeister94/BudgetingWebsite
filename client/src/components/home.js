@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import Alert from './Alert.vue';
 export default {
     name: 'Home',
     data() {
@@ -9,8 +9,14 @@ export default {
             valid: false,
             submitted: false,
             password: '',
+            message: '',
             passwordBlured: false,
+            wrong_credentials: false,
+            alertvariant: ''
         };
+    },
+    components: {
+        alert: Alert,
     },
     methods: {
         getLoggedStatus() {
@@ -20,6 +26,14 @@ export default {
                 .then((res) => {
                     this.data = res.data.msg;
                     console.log(JSON.stringify(this.data));
+                    if (this.data == 'logged') {
+                        console.log('Setting token to storage:');
+                        console.log(JSON.stringify(this.access_token));
+                        localStorage.setItem("user", this.access_token);
+                        // navigate to a protected resource
+                        this.$router.push("/dashboard");
+                    }
+
                 })
                 .catch((error) => {
                     // eslint-disable-next-line
@@ -31,33 +45,35 @@ export default {
             axios
                 .post(path, payload)
                 .then((res) => {
-                    this.login_data = res.data;
-                    console.log('RESPONSE LOGIN CALL');
-                    console.log(JSON.stringify(this.login_data));
-                    console.log('='.repeat(75));
-                    if ('access_token' in this.login_data) {
-                        var token = this.login_data.access_token;
+                    // console.log('RESPONSE LOGIN CALL');
+                    // console.log(JSON.stringify(this.login_data));
+                    // console.log('='.repeat(75));
+                    if (res.status == 200 && 'access_token' in res.data) {
+                        console.log(JSON.stringify(res.status));
+                        this.login_data = res.data;
+                        this.access_token = this.login_data.access_token;
                         this.request_config = {
-                            headers: { Authorization: `Bearer ${token}` },
+                            headers: { Authorization: `Bearer ${this.access_token}` },
                         };
-                    } else {
-                        this.request_config = null;
                     }
                     this.getLoggedStatus();
                 })
                 .catch((error) => {
                     // eslint-disable-next-line
-                    console.log(error);
+                    if (error.response.status === 401) {
+                        this.request_config = null;
+                        this.wrong_credentials = true;
+                        this.message = 'Wrong Credentials';
+                        this.alertvariant = 'danger';
+                    }
                 });
         },
         validate() {
             this.emailBlured = true;
             this.passwordBlured = true;
             if (this.validEmail(this.email) && this.validPassword(this.password)) {
-                console.log('dai');
                 this.valid = true;
             } else {
-                console.log('zio cane');
                 this.valid = false;
             }
         },
@@ -74,6 +90,7 @@ export default {
             }
         },
         submit() {
+            this.wrong_credentials = false;
             this.validate();
             if (this.valid) {
                 const payload = {

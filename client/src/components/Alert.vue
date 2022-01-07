@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-alert
-      variant='success'
+      :variant="alertVariant"
       :show=5
       dismissible
       fade
@@ -12,5 +12,11 @@
 <script>
 export default {
   props: ['message'],
+  name: 'Alert',
+  computed: {
+    alertVariant() {
+      return this.message.toLowerCase().includes('wrong') ? 'danger' : success;
+    },
+  },
 };
 </script>

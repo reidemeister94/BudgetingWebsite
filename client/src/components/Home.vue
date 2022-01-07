@@ -27,22 +27,17 @@
 								'is-invalid' : !validPassword(password) && passwordBlured}"
                 v-on:blur="passwordBlured = true"
               >
-              <div class="invalid-feedback">Password must be at least 4 character!</div>
+              <div class="invalid-feedback">Password must be at least 4 characters!</div>
             </div>
             <div class="mb-3"> <button
                 v-on:click.stop.prevent="submit"
                 class="btn btn-dark w-100"
               >Login</button> </div>
           </div>
-          <div
-            class="success-data"
-            v-else
-          >
-            <div class="text-center d-flex flex-column">
-              <i class='bx bxs-badge-check'></i>
-              <span class="text-center fs-1">You have been logged in <br> Successfully</span>
-            </div>
-          </div>
+          <alert
+            :message='message'
+            v-if='wrong_credentials'
+          ></alert>
         </div>
       </div>
     </div>

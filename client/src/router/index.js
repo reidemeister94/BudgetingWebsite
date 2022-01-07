@@ -4,6 +4,7 @@ import Books from '../components/Books.vue';
 import Ping from '../components/Ping.vue';
 import Home from '../components/Home.vue';
 import Register from '../components/Register.vue';
+import Dashboard from '../components/Dashboard.vue';
 
 Vue.use(Router);
 
@@ -19,6 +20,11 @@ export default new Router({
             path: '/register',
             name: 'Register',
             component: Register,
+        },
+        {
+            path: '/dashboard',
+            name: 'Dashboard',
+            component: Dashboard,
         },
         {
             path: '/books',

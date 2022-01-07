@@ -13,14 +13,6 @@
             <div class="text-center mb-4">
               <h4>Register Now</h4>
             </div>
-            <div class="forms-inputs mb-4"> <span>Email</span> <input
-                type="text"
-                v-model="email"
-                v-bind:class="{'form-control':true, 'is-invalid' : !validEmail(email) && emailBlured}"
-                v-on:blur="emailBlured = true"
-              >
-              <div class="invalid-feedback">A valid email is required!</div>
-            </div>
             <div class="forms-inputs mb-4"> <span>Username</span> <input
                 type="text"
                 v-model="username"
@@ -28,14 +20,6 @@
                 v-on:blur="usernameBlured = true"
               >
               <div class="invalid-feedback">A valid username is required!</div>
-            </div>
-            <div class="forms-inputs mb-4"> <span>Phone</span> <input
-                type="text"
-                v-model="phone"
-                v-bind:class="{'form-control':true, 'is-invalid' : !validPhone(phone) && phoneBlured}"
-                v-on:blur="phoneBlured = true"
-              >
-              <div class="invalid-feedback">A valid phone is required!</div>
             </div>
             <div class="forms-inputs mb-4"> <span>Password</span> <input
                 type="password"

@@ -68,7 +68,9 @@ def login():
     if username != "test" or password != "test":
         return jsonify({"msg": "Bad username or password"}), 401
 
-    access_token = create_access_token(identity=username)
+    additional_claims = {"username": username}
+    access_token = create_access_token(username, additional_claims=additional_claims)
+
     return jsonify(access_token=access_token)
 
 
