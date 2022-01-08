@@ -1,0 +1,23 @@
+.app {
+    display: grid;
+    grid-template-columns: [left] 20% [middle] 80% [right];
+}
+
+.sidebar {
+    grid-column-start: left;
+    grid-column-end: middle;
+}
+
+.my_component {
+    grid-column-start: middle;
+    grid-column-end: right;
+}
+
+.my_component_home {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    grid-column-start: left;
+    grid-column-end: right;
+    width: 100%;
+}

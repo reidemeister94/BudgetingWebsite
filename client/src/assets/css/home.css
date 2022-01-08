@@ -1,4 +1,4 @@
-body {
+/* body {
     background: #000
 }
 
@@ -42,4 +42,10 @@ body {
 
 .bxs-badge-check {
     font-size: 90px
+} */
+
+.login-form {
+    width: 100%;
+    justify-content: center;
+    margin-top: 5%;
 }

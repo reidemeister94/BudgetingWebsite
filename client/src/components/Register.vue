@@ -1,6 +1,6 @@
 <template>
-  <div class="container mt-5">
-    <div class="row d-flex justify-content-center">
+  <div class="container">
+    <div class="row">
       <div class="col-md-7">
         <div
           class="card px-5 py-4"
@@ -76,5 +76,5 @@
   </div>
 </template>
 
-<style src="../assets/css/register.css"></style>
+<style src="../assets/css/home.css"></style>
 <script src="./register.js"></script>

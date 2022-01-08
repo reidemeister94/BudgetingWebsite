@@ -1,12 +1,22 @@
 <template>
-  <div id="app">
-    <VueSidebarMenuAkahon
-      v-if="this.$route.name != 'Home'"
-      :menuTitle="menuTitle"
-      :menuIcon="menuIcon"
-      :menuItems="menu"
-    />
-    <router-view />
+  <div
+    id="app"
+    class='app'
+  >
+    <div v-if="toBeDisplayed">
+      <VueSidebarMenuAkahon
+        :menuTitle="menuTitle"
+        :menuIcon="menuIcon"
+        :menuItems="menu"
+        :bgColor="bgColor"
+        :menuItemsTextColor="menuItemsTextColor"
+        :logoTitleColor="logoTitleColor"
+        :iconsColor="iconsColor"
+        :menuItemsHoverColor="menuItemsHoverColor"
+        class='sidebar'
+      />
+    </div>
+    <router-view v-bind:class="[this.$route.name == 'Home' ? 'my_component_home' : 'my_component']" />
   </div>
 </template>
 
@@ -16,8 +26,16 @@ export default {
   data() {
     return {
       logged: false,
+      toBeDisplayed: true,
+      // namePage: this.$route.name,
       menuTitle: 'You Need a Budget',
-      menuIcon: 'bx-money',
+      menuIcon: 'bx-bar-chart-alt-2',
+      bgColor: '#eef0f4',
+      menuItemsTextColor: '#595f71',
+      logoTitleColor: '#222a3f',
+      iconsColor: '#a1a7b6',
+      menuItemsHoverColor: '#1d253b',
+      // menuItemsHoverColor: '#ffffff',
       menu: [
         {
           link: '/dashboard',
@@ -41,19 +59,25 @@ export default {
     };
   },
   components: { VueSidebarMenuAkahon },
-  // created() {
-  //   // console.log(this.$route.name);
-  //   var userLogged = common.checkUserLogged();
-  //   // console.log(JSON.stringify('HOME - USER LOGGED: ' + userLogged));
-  //   if (userLogged) {
-  //     this.logged = true;
-  //   }
-  // },
+  watch: {
+    $route(to, from) {
+      this.toBeDisplayed = this.checkSideBarDisplay(to.name);
+    },
+  },
+  methods: {
+    checkSideBarDisplay(nameCurrentPage) {
+      if (nameCurrentPage == 'Home' || nameCurrentPage == 'Register') {
+        return false;
+      } else {
+        return true;
+      }
+    },
+  },
+  created() {
+    var nameCurrentPage = this.$route.name;
+    this.toBeDisplayed = this.checkSideBarDisplay(nameCurrentPage);
+  },
 };
 </script>
 
-<style>
-#app {
-  margin-top: 60px;
-}
-</style>
+<style src="./assets/css/common.css"></style>

@@ -1,6 +1,6 @@
 <template>
-  <div class="container mt-5">
-    <div class="row d-flex justify-content-center">
+  <div>
+    <div class="row login-form">
       <div class="col-md-6">
         <div
           class="card px-5 py-5"
