@@ -72,6 +72,9 @@ export default {
                     this.smth_wrong = true;
                 });
         },
+        home() {
+            this.$router.push('/')
+        },
         submit() {
             this.validate();
             if (this.valid) {

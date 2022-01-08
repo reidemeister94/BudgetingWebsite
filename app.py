@@ -63,12 +63,12 @@ def optionally_protected():
 def login():
     username = request.json.get("username", None)
     password = request.json.get("password", None)
-    db_conn = db_handler.get_db_connection()
-    user_exists = db_handler.check_credentials(db_conn, username, password)
+    user_exists = db_handler.check_credentials(username, password)
     if not user_exists:
         return jsonify({"msg": "bad username or password"}), 401
-    additional_claims = {"username": username}
-    access_token = create_access_token(username, additional_claims=additional_claims)
+    # additional_claims = {"username": username}
+    # access_token = create_access_token(username, additional_claims=additional_claims)
+    access_token = create_access_token(username)
     return jsonify(access_token=access_token)
 
 
@@ -81,10 +81,11 @@ def register():
         return jsonify({"msg": "user already exists"})
     else:
         db_handler.add_user_to_db(username, password)
-        additional_claims = {"username": username}
-        access_token = create_access_token(
-            username, additional_claims=additional_claims
-        )
+        # additional_claims = {"username": username}
+        # access_token = create_access_token(
+        #     username, additional_claims=additional_claims
+        # )
+        access_token = create_access_token(username)
         return jsonify(access_token=access_token)
 
 

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-navbar
+    <!-- <b-navbar
       id="navbar"
       toggleable="md"
       type="dark"
@@ -15,7 +15,7 @@
           active
         >Logout</b-nav-item>
       </b-navbar-nav>
-    </b-navbar>
+    </b-navbar> -->
     <section>
       <div class="container mt-5">
         <div class="row">

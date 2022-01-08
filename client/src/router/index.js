@@ -1,10 +1,9 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Books from '../components/Books.vue';
-import Ping from '../components/Ping.vue';
 import Home from '../components/Home.vue';
 import Register from '../components/Register.vue';
 import Dashboard from '../components/Dashboard.vue';
+import Logout from '../components/Logout.vue';
 
 Vue.use(Router);
 
@@ -27,14 +26,9 @@ export default new Router({
             component: Dashboard,
         },
         {
-            path: '/books',
-            name: 'Books',
-            component: Books,
-        },
-        {
-            path: '/ping',
-            name: 'Ping',
-            component: Ping,
+            path: '/logout',
+            name: 'Logout',
+            component: Logout,
         },
     ],
 });

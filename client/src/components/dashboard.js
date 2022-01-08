@@ -15,7 +15,7 @@ export default {
                 //decode token here and attach to the user object
                 let decoded_jwt = VueJwtDecode.decode(token);
                 // console.log("DECODED JWT: " + JSON.stringify(decoded_jwt));
-                this.username = decoded_jwt.username;
+                this.username = decoded_jwt.sub;
                 // console.log("DECODED USERNAME: " + JSON.stringify(this.username));
             } catch (error) {
                 this.$router.push("/");
@@ -23,10 +23,7 @@ export default {
                 // console.log(error, 'Error decoding token');
             }
         },
-        logUserOut() {
-            localStorage.removeItem('user');
-            this.$router.push('/');
-        },
+
     },
     created() {
         var userLogged = common.checkUserLogged();

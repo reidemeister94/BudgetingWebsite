@@ -9,6 +9,9 @@ var common = {
         localStorage.setItem("user", user_token);
         this.getStorageUserToken()
     },
+    logUserOut() {
+        localStorage.removeItem('user');
+    },
     checkUserLogged() {
         var token = this.getStorageUserToken()
             // console.log("TOKEN " + JSON.stringify(token))

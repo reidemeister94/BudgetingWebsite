@@ -37,6 +37,13 @@
               <b-row
                 class="mb-3 text-center"
                 align-h="center"
+              > <button
+                  v-on:click.stop.prevent="home"
+                  class="btn btn-dark w-50"
+                >Home</button></b-row>
+              <b-row
+                class="mb-3 text-center"
+                align-h="center"
               >
                 <alert
                   :message='msg_user_exists'
