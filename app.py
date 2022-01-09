@@ -1,5 +1,5 @@
 import os
-from datetime import timedelta
+import datetime
 from flask import (
     Flask,
     json,
@@ -10,7 +10,7 @@ from flask import (
     redirect,
     url_for,
 )
-
+from pprint import pprint
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
@@ -41,20 +41,34 @@ db_handler = DBHandler()
 #     users = db_handler.get_all_elements_from_table(db_conn, "user")
 #     response_object["users"] = users
 #     return jsonify(response_object)
-@app.route("/dashboard", methods=["GET"])
+@app.route("/dashboard", methods=["POST"])
 @jwt_required()
 def dashboard():
-    return jsonify({"msg": "logged"})
+    username = get_jwt_identity()
+    if username:
+        print(f"IDENTITY USER: {username}")
+        if request.json is None:
+            return jsonify({"user_history": db_handler.get_user_history(username)})
+        start_date = request.json.get("start_date", None)
+        end_date = request.json.get("end_date", None)
+        print(f"START DATE: {start_date}, END DATE: {end_date}")
+        user_history = db_handler.get_user_history(username, start_date, end_date)
+        # username = current_identity.sub
+        # print(username)
+        return jsonify({"user_history": user_history})
 
-
-@app.route("/", methods=["GET"])
-@jwt_required(optional=True)
-def optionally_protected():
-    current_identity = get_jwt_identity()
-    if current_identity:
-        return jsonify({"msg": "logged"})
     else:
-        return jsonify({"msg": "not logged"})
+        return jsonify({"msg": "not authorized"}), 401
+
+
+# @app.route("/", methods=["GET"])
+# @jwt_required(optional=True)
+# def optionally_protected():
+#     current_identity = get_jwt_identity()
+#     if current_identity:
+#         return jsonify({"msg": "logged"})
+#     else:
+#         return jsonify({"msg": "not logged"})
 
 
 # Create a route to authenticate your users and return JWTs. The
@@ -68,7 +82,9 @@ def login():
         return jsonify({"msg": "bad username or password"}), 401
     # additional_claims = {"username": username}
     # access_token = create_access_token(username, additional_claims=additional_claims)
-    access_token = create_access_token(username)
+    access_token = create_access_token(
+        username, expires_delta=datetime.timedelta(minutes=30)
+    )
     return jsonify(access_token=access_token)
 
 
@@ -85,7 +101,9 @@ def register():
         # access_token = create_access_token(
         #     username, additional_claims=additional_claims
         # )
-        access_token = create_access_token(username)
+        access_token = create_access_token(
+            username, expires_delta=datetime.timedelta(minutes=30)
+        )
         return jsonify(access_token=access_token)
 
 
