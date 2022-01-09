@@ -3,6 +3,7 @@ from typing import List
 import pathlib
 import os
 from hashlib import sha256
+from dateutil import parser
 
 curr_dir = str(pathlib.Path(__file__).parent.resolve())
 
@@ -18,7 +19,9 @@ class DBHandler:
         return d
 
     def get_db_connection(self) -> sqlite3.Connection:
-        conn = sqlite3.connect(self.path_db)
+        conn = sqlite3.connect(
+            self.path_db, detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES
+        )
         conn.row_factory = self.dict_factory
         return conn
 
@@ -68,3 +71,19 @@ class DBHandler:
         row = {"username": username, "password": password_digest}
         self.insert_row_to_table(db_conn, "user", row)
         db_conn.close()
+
+    def get_user_history(self, username, start_date=None, end_date=None):
+        db_conn = self.get_db_connection()
+        cursor = db_conn.cursor()
+        if start_date is not None and end_date is not None:
+            # start_date = parser.parse(start_date)
+            # end_date = parser.parse(end_date)
+            print(start_date, end_date)
+            # print(type(parser.parse(start_date)))
+            sql_user_transactions = "SELECT * FROM ledger WHERE account_name=? AND date_transaction BETWEEN ? AND ?"
+            args = [username, start_date, end_date]
+        else:
+            sql_user_transactions = "SELECT * FROM ledger WHERE account_name=?"
+            args = [username]
+        user_transactions = cursor.execute(sql_user_transactions, args).fetchall()
+        return user_transactions

@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS ledger;
+DROP TABLE IF EXISTS prevision;
 
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -15,13 +16,20 @@ CREATE TABLE user (
 CREATE TABLE category (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name_category TEXT UNIQUE NOT NULL,
-  type_category INTEGER NOT NULL,
+  account_name TEXT NOT NULL,
+  type_category INTEGER NOT NULL
+);
+
+CREATE TABLE prevision (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  account_name TEXT NOT NULL,
+  category TEXT NOT NULL,
   predicted_amount REAL NOT NULL
 );
 
 CREATE TABLE ledger (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  account_id INTEGER NOT NULL,
+  account_name TEXT NOT NULL,
   date_transaction TEXT NOT NULL,
   amount REAL NOT NULL,
   category TEXT NOT NULL,
