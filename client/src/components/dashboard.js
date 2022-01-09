@@ -1,12 +1,17 @@
 import VueJwtDecode from 'vue-jwt-decode';
 import common from './common.js';
+
+
 export default {
     name: 'Dashboard',
     data() {
         return {
-            username: ''
+            username: '',
         };
     },
+    // components: {
+    //     PieChart
+    // },
     methods: {
         getUserDetails() {
             // get token from localstorage

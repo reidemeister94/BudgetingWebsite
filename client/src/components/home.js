@@ -24,7 +24,7 @@ export default {
             this.$router.push('/register');
         },
         login(payload) {
-            const path = 'http://localhost:4794/login';
+            const path = this.$apiEndpoint + 'login';
             axios
                 .post(path, payload)
                 .then((res) => {

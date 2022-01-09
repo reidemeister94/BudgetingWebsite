@@ -43,7 +43,7 @@ export default {
             }
         },
         register(payload) {
-            const path = 'http://localhost:4794/register';
+            const path = this.$apiEndpoint + 'register';
             axios
                 .post(path, payload)
                 .then((res) => {

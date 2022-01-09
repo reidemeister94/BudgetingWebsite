@@ -66,7 +66,7 @@ export default {
   },
   methods: {
     showSideBar(nameCurrentPage) {
-      console.log(nameCurrentPage);
+      // console.log(nameCurrentPage);
       if (nameCurrentPage == 'Home' || nameCurrentPage == 'Register') {
         return false;
       } else {

@@ -26,6 +26,15 @@
               </li>
             </ul>
           </div>
+          <!-- <div>
+            <SampleChart />
+          </div> -->
+          <!-- <div>
+            <pie-chart
+              :data="chartData"
+              :options="chartOptions"
+            ></pie-chart>
+          </div> -->
         </div>
       </div>
     </section>
