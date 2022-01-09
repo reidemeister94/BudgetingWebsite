@@ -16,7 +16,7 @@
         class='sidebar'
       />
     </div>
-    <router-view v-bind:class="[this.$route.name == 'Home' ? 'my_component_home' : 'my_component']" />
+    <router-view v-bind:class="[this.showSideBar(this.$route.name) ? 'my_component' : 'my_component_home']" />
   </div>
 </template>
 
@@ -61,11 +61,12 @@ export default {
   components: { VueSidebarMenuAkahon },
   watch: {
     $route(to, from) {
-      this.toBeDisplayed = this.checkSideBarDisplay(to.name);
+      this.toBeDisplayed = this.showSideBar(to.name);
     },
   },
   methods: {
-    checkSideBarDisplay(nameCurrentPage) {
+    showSideBar(nameCurrentPage) {
+      console.log(nameCurrentPage);
       if (nameCurrentPage == 'Home' || nameCurrentPage == 'Register') {
         return false;
       } else {
@@ -75,7 +76,7 @@ export default {
   },
   created() {
     var nameCurrentPage = this.$route.name;
-    this.toBeDisplayed = this.checkSideBarDisplay(nameCurrentPage);
+    this.toBeDisplayed = this.showSideBar(nameCurrentPage);
   },
 };
 </script>

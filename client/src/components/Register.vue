@@ -1,10 +1,10 @@
 <template>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-7">
+  <div>
+    <div class="row login-form">
+      <div class="col-md-6">
         <div
-          class="card px-5 py-4"
-          id="form1"
+          class="card px-5 py-5"
+          id="form_register"
         >
           <div class="form-data">
             <div class="text-center mb-4">
