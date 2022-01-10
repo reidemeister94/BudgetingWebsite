@@ -7,3 +7,5 @@ sql_user_previsions = (
 sql_user_categories = (
     "SELECT category_name,account_name,category_type FROM category where account_name=?"
 )
+sql_set_user_balance = "UPDATE user SET starting_balance=? WHERE username=?"
+sql_insert_transaction = ""

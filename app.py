@@ -47,6 +47,32 @@ def get_user_history(username, start_date, end_date):
     return db_handler.get_user_history(username, start_date, end_date)
 
 
+def date_formatted_correctly(date_string):
+    try:
+        datetime.datetime.strptime(date_string, "%Y-%m-%d")
+        return True
+    except:
+        return False
+
+
+def dashboard_body_correct(start_date, end_date):
+    if (
+        (start_date is not None and end_date is None)
+        or (start_date is None and end_date is not None)
+    ) or (
+        (start_date is not None and end_date is not None)
+        and (
+            (type(start_date) != str or type(start_date) != str)
+            or (
+                not date_formatted_correctly(start_date)
+                or not date_formatted_correctly(end_date)
+            )
+        )
+    ):
+        return False
+    return True
+
+
 @app.route("/dashboard", methods=["POST"])
 @jwt_required()
 def dashboard():
@@ -57,12 +83,14 @@ def dashboard():
             return jsonify({"user_history": db_handler.get_user_history(username)})
         start_date = request.json.get("start_date", None)
         end_date = request.json.get("end_date", None)
-        print(f"START DATE: {start_date}, END DATE: {end_date}")
-        user_history = get_user_history(username, start_date, end_date)
-        # username = current_identity.sub
-        # print(username)
-        return jsonify(user_history)
-
+        print(start_date, end_date)
+        if not dashboard_body_correct(start_date, end_date):
+            return jsonify({"msg": "bad format"}), 400
+        try:
+            user_history = get_user_history(username, start_date, end_date)
+            return jsonify(user_history)
+        except Exception as e:
+            return jsonify({"msg": "something went wrong"}), 400
     else:
         return jsonify({"msg": "not authorized"}), 401
 
