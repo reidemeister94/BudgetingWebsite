@@ -73,6 +73,15 @@ def dashboard_body_correct(start_date, end_date):
     return True
 
 
+@app.route("/transaction/<id>", methods=["POST", "PUT", "DELETE"])
+@jwt_required()
+def process_transaction(id):
+    if request.method == "POST":
+        # add transaction
+        print("post", id)
+    return jsonify({"msg": "ok"})
+
+
 @app.route("/dashboard", methods=["POST"])
 @jwt_required()
 def dashboard():
