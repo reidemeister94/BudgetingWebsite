@@ -4,9 +4,11 @@ import pathlib
 import os
 from hashlib import sha256
 from dateutil import parser
-import db_queries
+import sys
 
 curr_dir = str(pathlib.Path(__file__).parent.resolve())
+sys.path.append(curr_dir)
+import db_queries
 
 
 class DBHandler:
@@ -77,19 +79,19 @@ class DBHandler:
         if cursor is None:
             db_conn = self.get_db_connection()
             cursor = db_conn.cursor()
-        return cursor.execute(db_queries.sql_user_info, username).fetchall()[0]
+        return cursor.execute(db_queries.sql_user_info, [username]).fetchall()[0]
 
     def get_user_previsions(self, cursor, username):
         if cursor is None:
             db_conn = self.get_db_connection()
             cursor = db_conn.cursor()
-        return cursor.execute(db_queries.sql_user_previsions, username).fetchall()
+        return cursor.execute(db_queries.sql_user_previsions, [username]).fetchall()
 
     def get_user_categories(self, cursor, username):
         if cursor is None:
             db_conn = self.get_db_connection()
             cursor = db_conn.cursor()
-        return cursor.execute(db_queries.sql_user_categories, username).fetchall()
+        return cursor.execute(db_queries.sql_user_categories, [username]).fetchall()
 
     def get_user_history(self, username, start_date=None, end_date=None):
         db_conn = self.get_db_connection()

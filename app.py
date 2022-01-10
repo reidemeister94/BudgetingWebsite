@@ -41,6 +41,12 @@ db_handler = DBHandler()
 #     users = db_handler.get_all_elements_from_table(db_conn, "user")
 #     response_object["users"] = users
 #     return jsonify(response_object)
+
+
+def get_user_history(username, start_date, end_date):
+    return db_handler.get_user_history(username, start_date, end_date)
+
+
 @app.route("/dashboard", methods=["POST"])
 @jwt_required()
 def dashboard():
@@ -52,10 +58,10 @@ def dashboard():
         start_date = request.json.get("start_date", None)
         end_date = request.json.get("end_date", None)
         print(f"START DATE: {start_date}, END DATE: {end_date}")
-        user_history = db_handler.get_user_history(username, start_date, end_date)
+        user_history = get_user_history(username, start_date, end_date)
         # username = current_identity.sub
         # print(username)
-        return jsonify({"user_history": user_history})
+        return jsonify(user_history)
 
     else:
         return jsonify({"msg": "not authorized"}), 401
