@@ -21,19 +21,11 @@ add_prevision = (
 )
 
 
-update_transaction = "UPDATE ledger SET transaction_date=?,amount=?,category=?,transaction_type=?,transaction_description=? WHERE account_name=?"
-update_category = (
-    "UPDATE category SET category_name=?,category_type=? WHERE account_name=?"
-)
-update_prevision = (
-    "UPDATE prevision SET category=?,predicted_amount=? WHERE account_name=?"
-)
+update_transaction = "UPDATE ledger SET transaction_date=?,amount=?,category=?,transaction_type=?,transaction_description=? WHERE id=?"
+update_category = "UPDATE category SET category_name=?,category_type=? WHERE id=?"
+update_prevision = "UPDATE prevision SET category=?,predicted_amount=? WHERE id=?"
 
 
-delete_transaction = "DELETE FROM ledger WHERE account_name=? AND transaction_date=? AND amount=? AND category=? AND transaction_type=? AND transaction_description=?"
-delete_category = (
-    "DELETE FROM category WHERE category_name=? AND category_type=? AND account_name=?"
-)
-delete_prevision = (
-    "DELETE FROM prevision WHERE category=? AND predicted_amount=? AND account_name=?"
-)
+delete_transaction = "DELETE FROM ledger WHERE id=?"
+delete_category = "DELETE FROM category WHERE id=?"
+delete_prevision = "DELETE FROM prevision WHERE id=?"
