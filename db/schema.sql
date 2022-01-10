@@ -15,9 +15,9 @@ CREATE TABLE user (
 -- to that category for the current year
 CREATE TABLE category (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name_category TEXT UNIQUE NOT NULL,
+  category_name TEXT UNIQUE NOT NULL,
   account_name TEXT NOT NULL,
-  type_category INTEGER NOT NULL
+  category_type INTEGER NOT NULL
 );
 
 CREATE TABLE prevision (
@@ -30,9 +30,9 @@ CREATE TABLE prevision (
 CREATE TABLE ledger (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   account_name TEXT NOT NULL,
-  date_transaction TEXT NOT NULL,
+  transaction_date TEXT NOT NULL,
   amount REAL NOT NULL,
   category TEXT NOT NULL,
-  type_transaction INTEGER NOT NULL,
-  description_transaction TEXT NOT NULL
+  transaction_type INTEGER NOT NULL,
+  transaction_description TEXT NOT NULL
 );

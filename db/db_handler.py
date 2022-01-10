@@ -4,6 +4,7 @@ import pathlib
 import os
 from hashlib import sha256
 from dateutil import parser
+import db_queries
 
 curr_dir = str(pathlib.Path(__file__).parent.resolve())
 
@@ -72,18 +73,42 @@ class DBHandler:
         self.insert_row_to_table(db_conn, "user", row)
         db_conn.close()
 
+    def get_user_info(self, cursor, username):
+        if cursor is None:
+            db_conn = self.get_db_connection()
+            cursor = db_conn.cursor()
+        return cursor.execute(db_queries.sql_user_info, username).fetchall()[0]
+
+    def get_user_previsions(self, cursor, username):
+        if cursor is None:
+            db_conn = self.get_db_connection()
+            cursor = db_conn.cursor()
+        return cursor.execute(db_queries.sql_user_previsions, username).fetchall()
+
+    def get_user_categories(self, cursor, username):
+        if cursor is None:
+            db_conn = self.get_db_connection()
+            cursor = db_conn.cursor()
+        return cursor.execute(db_queries.sql_user_categories, username).fetchall()
+
     def get_user_history(self, username, start_date=None, end_date=None):
         db_conn = self.get_db_connection()
         cursor = db_conn.cursor()
+        user_info = self.get_user_info(cursor, username)
         if start_date is not None and end_date is not None:
-            # start_date = parser.parse(start_date)
-            # end_date = parser.parse(end_date)
-            print(start_date, end_date)
-            # print(type(parser.parse(start_date)))
-            sql_user_transactions = "SELECT * FROM ledger WHERE account_name=? AND date_transaction BETWEEN ? AND ?"
+            start_date = parser.parse(start_date)
+            end_date = parser.parse(end_date)
+            sql_user_transactions = db_queries.sql_user_transactions_date_range
             args = [username, start_date, end_date]
         else:
-            sql_user_transactions = "SELECT * FROM ledger WHERE account_name=?"
+            sql_user_transactions = db_queries.sql_user_transactions
             args = [username]
         user_transactions = cursor.execute(sql_user_transactions, args).fetchall()
-        return user_transactions
+        user_categories = self.get_user_categories(cursor, username)
+        user_previsions = self.get_user_previsions(cursor, username)
+        return {
+            "user_info": user_info,
+            "user_transactions": user_transactions,
+            "user_categories": user_categories,
+            "user_previsions": user_previsions,
+        }
