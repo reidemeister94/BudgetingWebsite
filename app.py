@@ -78,18 +78,18 @@ def dashboard_body_correct(start_date, end_date):
 def dashboard():
     username = get_jwt_identity()
     if username:
-        print(f"IDENTITY USER: {username}")
+        # print(f"IDENTITY USER: {username}")
         if request.json is None:
             return jsonify({"user_history": db_handler.get_user_history(username)})
         start_date = request.json.get("start_date", None)
         end_date = request.json.get("end_date", None)
-        print(start_date, end_date)
+        # print(start_date, end_date)
         if not dashboard_body_correct(start_date, end_date):
             return jsonify({"msg": "bad format"}), 400
         try:
             user_history = get_user_history(username, start_date, end_date)
             return jsonify(user_history)
-        except Exception as e:
+        except:
             return jsonify({"msg": "something went wrong"}), 400
     else:
         return jsonify({"msg": "not authorized"}), 401

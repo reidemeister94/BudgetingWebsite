@@ -79,19 +79,19 @@ class DBHandler:
         if cursor is None:
             db_conn = self.get_db_connection()
             cursor = db_conn.cursor()
-        return cursor.execute(db_queries.sql_user_info, [username]).fetchall()[0]
+        return cursor.execute(db_queries.get_user_info, [username]).fetchall()[0]
 
     def get_user_previsions(self, cursor, username):
         if cursor is None:
             db_conn = self.get_db_connection()
             cursor = db_conn.cursor()
-        return cursor.execute(db_queries.sql_user_previsions, [username]).fetchall()
+        return cursor.execute(db_queries.get_user_previsions, [username]).fetchall()
 
     def get_user_categories(self, cursor, username):
         if cursor is None:
             db_conn = self.get_db_connection()
             cursor = db_conn.cursor()
-        return cursor.execute(db_queries.sql_user_categories, [username]).fetchall()
+        return cursor.execute(db_queries.get_user_categories, [username]).fetchall()
 
     def get_user_history(self, username, start_date=None, end_date=None):
         db_conn = self.get_db_connection()
@@ -100,12 +100,12 @@ class DBHandler:
         if start_date is not None and end_date is not None:
             start_date = parser.parse(start_date)
             end_date = parser.parse(end_date)
-            sql_user_transactions = db_queries.sql_user_transactions_date_range
+            user_transactions = db_queries.get_user_transactions_date_range
             args = [username, start_date, end_date]
         else:
-            sql_user_transactions = db_queries.sql_user_transactions
+            user_transactions = db_queries.get_user_transactions
             args = [username]
-        user_transactions = cursor.execute(sql_user_transactions, args).fetchall()
+        user_transactions = cursor.execute(user_transactions, args).fetchall()
         user_categories = self.get_user_categories(cursor, username)
         user_previsions = self.get_user_previsions(cursor, username)
         return {
