@@ -11,6 +11,7 @@ from flask import (
     url_for,
 )
 from pprint import pprint
+from string import printable
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
@@ -55,6 +56,33 @@ def date_formatted_correctly(date_string):
         return False
 
 
+def clean_description(description):
+    description = description.decode("utf-8", "ignore").encode("utf-8")
+    return "".join(char for char in description if char in printable)
+
+
+def amount_formatted_correctly(amount):
+    try:
+        amount = float(amount)
+        if amount >= 0:
+            return True
+        else:
+            return False
+    except ValueError:
+        return False
+
+
+def transaction_type_formatted_correctly(transaction_type):
+    try:
+        transaction_type = int(transaction_type)
+        if transaction_type == 0 or transaction_type == 1:
+            return True
+        else:
+            return False
+    except Exception as e:
+        return False
+
+
 def dashboard_body_correct(start_date, end_date):
     if (
         (start_date is not None and end_date is None)
@@ -73,13 +101,55 @@ def dashboard_body_correct(start_date, end_date):
     return True
 
 
+def is_transaction_payload_healthy(request_json, username_jwt):
+    keys = [
+        "account_name",
+        "transaction_date",
+        "amount",
+        "category",
+        "transaction_type",
+        "transaction_description",
+    ]
+    if any([key not in request_json for key in keys]):
+        return False
+    if username_jwt != request_json["account_name"]:
+        return False
+    if not date_formatted_correctly(request_json["transaction_date"]):
+        return False
+    if not amount_formatted_correctly(request_json["amount"]):
+        return False
+    if not db_handler.category_transaction_is_present(
+        request_json["category"], username_jwt
+    ):
+        return False
+    if not transaction_type_formatted_correctly(request_json["transaction_type"]):
+        return False
+    # account_name,transaction_date,amount,category,transaction_type,transaction_description
+    return True
+
+
 @app.route("/transaction/<id>", methods=["POST", "PUT", "DELETE"])
 @jwt_required()
 def process_transaction(id):
+    username_jwt = get_jwt_identity()
     if request.method == "POST":
-        # add transaction
-        print("post", id)
-    return jsonify({"msg": "ok"})
+        payload_is_healthy = is_transaction_payload_healthy(request.json, username_jwt)
+        if payload_is_healthy:
+            success = db_handler.insert_transaction(
+                [
+                    request.json["account_name"],
+                    request.json["transaction_date"],
+                    request.json["amount"],
+                    request.json["category"],
+                    request.json["transaction_type"],
+                    request.json["transaction_description"],
+                ]
+            )
+            if success:
+                return jsonify({"msg": "ok"})
+            else:
+                return jsonify({"msg": "KO"}), 500
+        return jsonify({"msg": "bad request"}), 400
 
 
 @app.route("/dashboard", methods=["POST"])
@@ -98,7 +168,8 @@ def dashboard():
         try:
             user_history = get_user_history(username, start_date, end_date)
             return jsonify(user_history)
-        except:
+        except Exception as e:
+            print(str(e))
             return jsonify({"msg": "something went wrong"}), 400
     else:
         return jsonify({"msg": "not authorized"}), 401
