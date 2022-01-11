@@ -61,37 +61,28 @@ class DBHandler:
                 return True
         return False
 
-    def insert_row_to_table(self, conn, table, row):
-        cols = ", ".join('"{}"'.format(col) for col in row.keys())
-        vals = ", ".join(":{}".format(col) for col in row.keys())
-        sql = 'INSERT INTO "{0}" ({1}) VALUES ({2})'.format(table, cols, vals)
-        conn.cursor().execute(sql, row)
-        conn.commit()
-
-    def add_user_to_db(self, username, password):
-        db_conn = self.get_db_connection()
-        password_digest = sha256(password.encode("utf-8")).hexdigest()
-        row = {"username": username, "password": password_digest}
-        self.insert_row_to_table(db_conn, "user", row)
-        db_conn.close()
+    ### RETRIEVE METHODS
 
     def get_user_info(self, cursor, username):
         if cursor is None:
             db_conn = self.get_db_connection()
             cursor = db_conn.cursor()
-        return cursor.execute(db_queries.get_user_info, [username]).fetchall()[0]
+        result = cursor.execute(db_queries.get_user_info, [username]).fetchall()[0]
+        return result
 
     def get_user_previsions(self, cursor, username):
         if cursor is None:
             db_conn = self.get_db_connection()
             cursor = db_conn.cursor()
-        return cursor.execute(db_queries.get_user_previsions, [username]).fetchall()
+        result = cursor.execute(db_queries.get_user_previsions, [username]).fetchall()
+        return result
 
     def get_user_categories(self, cursor, username):
         if cursor is None:
             db_conn = self.get_db_connection()
             cursor = db_conn.cursor()
-        return cursor.execute(db_queries.get_user_categories, [username]).fetchall()
+        result = cursor.execute(db_queries.get_user_categories, [username]).fetchall()
+        return result
 
     def get_user_history(self, username, start_date=None, end_date=None):
         db_conn = self.get_db_connection()
@@ -108,9 +99,138 @@ class DBHandler:
         user_transactions = cursor.execute(user_transactions, args).fetchall()
         user_categories = self.get_user_categories(cursor, username)
         user_previsions = self.get_user_previsions(cursor, username)
+        db_conn.close()
         return {
             "user_info": user_info,
             "user_transactions": user_transactions,
             "user_categories": user_categories,
             "user_previsions": user_previsions,
         }
+
+    ### INSERT METHODS
+    def insert_user(self, username, password, starting_balance=None):
+        try:
+            password_digest = sha256(password.encode("utf-8")).hexdigest()
+            row = [username, password_digest, starting_balance]
+            db_conn = self.get_db_connection()
+            cursor = db_conn.cursor()
+            cursor.execute(db_queries.insert_user, row)
+            db_conn.close()
+            return True
+        except:
+            return False
+
+    def insert_transaction(self, transaction_data):
+        try:
+            db_conn = self.get_db_connection()
+            cursor = db_conn.cursor()
+            cursor.execute(db_queries.insert_transaction, transaction_data)
+            db_conn.commit()
+            db_conn.close()
+            return True
+        except:
+            return False
+
+    def insert_category(self, category_data):
+        try:
+            db_conn = self.get_db_connection()
+            cursor = db_conn.cursor()
+            cursor.execute(db_queries.insert_category, category_data)
+            db_conn.commit()
+            db_conn.close()
+            return True
+        except:
+            return False
+
+    def insert_prevision(self, prevision_data):
+        try:
+            db_conn = self.get_db_connection()
+            cursor = db_conn.cursor()
+            cursor.execute(db_queries.insert_prevision, prevision_data)
+            db_conn.commit()
+            db_conn.close()
+            return True
+        except:
+            return False
+
+    ### UPDATE METHODS
+
+    def update_transaction(self, transaction_data):
+        try:
+            db_conn = self.get_db_connection()
+            cursor = db_conn.cursor()
+            cursor.execute(db_queries.update_transaction, transaction_data)
+            db_conn.commit()
+            db_conn.close()
+            return True
+        except:
+            return False
+
+    def update_category(self, category_data):
+        try:
+            db_conn = self.get_db_connection()
+            cursor = db_conn.cursor()
+            cursor.execute(db_queries.update_category, category_data)
+            db_conn.commit()
+            db_conn.close()
+            return True
+        except:
+            return False
+
+    def update_prevision(self, prevision_data):
+        try:
+            db_conn = self.get_db_connection()
+            cursor = db_conn.cursor()
+            cursor.execute(db_queries.update_prevision, prevision_data)
+            db_conn.commit()
+            db_conn.close()
+            return True
+        except:
+            return False
+
+    ### DELETE METHODS
+
+    def delete_transaction(self, transaction_data):
+        try:
+            db_conn = self.get_db_connection()
+            cursor = db_conn.cursor()
+            cursor.execute(db_queries.delete_transaction, transaction_data)
+            db_conn.commit()
+            db_conn.close()
+            return True
+        except:
+            return False
+
+    def delete_category(self, category_data):
+        try:
+            db_conn = self.get_db_connection()
+            cursor = db_conn.cursor()
+            cursor.execute(db_queries.delete_category, category_data)
+            db_conn.commit()
+            db_conn.close()
+            return True
+        except:
+            return False
+
+    def delete_prevision(self, prevision_data):
+        try:
+            db_conn = self.get_db_connection()
+            cursor = db_conn.cursor()
+            cursor.execute(db_queries.delete_prevision, prevision_data)
+            db_conn.commit()
+            db_conn.close()
+            return True
+        except:
+            return False
+
+    ### UTILS METHODS
+    def category_transaction_is_present(self, category_transaction, username):
+        db_conn = self.get_db_connection()
+        cursor = db_conn.cursor()
+        categories_user = self.get_user_categories(cursor, username)
+        db_conn.commit()
+        db_conn.close()
+        for category in categories_user:
+            if category_transaction == category["category_name"]:
+                return True
+        return False
