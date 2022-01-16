@@ -1,6 +1,3 @@
-from app import is_transaction_in_db
-
-
 get_user_transactions_date_range = (
     "SELECT * FROM ledger WHERE account_name=? AND transaction_date BETWEEN ? AND ?"
 )
