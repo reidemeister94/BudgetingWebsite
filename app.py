@@ -101,6 +101,21 @@ def dashboard_body_correct(start_date, end_date):
     return True
 
 
+def is_transaction_payload_delete_healthy(id, request_json, username_jwt):
+    if username_jwt != request_json["account_name"]:
+        return False
+    try:
+        transaction_id = int(id)
+        if transaction_id < 0:
+            return False
+    except:
+        return False
+    trans_in_db = db_handler.is_transaction_in_db(id, username_jwt)
+    if trans_in_db:
+        return False
+    return True
+
+
 def is_transaction_payload_healthy(request_json, username_jwt):
     keys = [
         "account_name",
@@ -132,24 +147,40 @@ def is_transaction_payload_healthy(request_json, username_jwt):
 @jwt_required()
 def process_transaction(id):
     username_jwt = get_jwt_identity()
-    if request.method == "POST":
+    if request.method == "POST" or request.method == "PUT":
         payload_is_healthy = is_transaction_payload_healthy(request.json, username_jwt)
         if payload_is_healthy:
-            success = db_handler.insert_transaction(
-                [
-                    request.json["account_name"],
-                    request.json["transaction_date"],
-                    request.json["amount"],
-                    request.json["category"],
-                    request.json["transaction_type"],
-                    request.json["transaction_description"],
-                ]
-            )
+            payload = [
+                request.json["account_name"],
+                request.json["transaction_date"],
+                request.json["amount"],
+                request.json["category"],
+                request.json["transaction_type"],
+                request.json["transaction_description"],
+            ]
+            if request.method == "POST":
+                success = db_handler.insert_transaction(payload)
+            elif request.method == "PUT":
+                success = db_handler.update_transaction(payload)
             if success:
                 return jsonify({"msg": "ok"})
             else:
-                return jsonify({"msg": "KO"}), 500
-        return jsonify({"msg": "bad request"}), 400
+                return jsonify({"msg": "Error inserting transaction data"}), 500
+        else:
+            return jsonify({"msg": "bad request"}), 400
+    elif request.method == "DELETE":
+        payload_is_healthy = is_transaction_payload_delete_healthy(
+            id, request.json, username_jwt
+        )
+        if payload_is_healthy:
+            payload = [id, request.json["account_name"]]
+            success_delete = db_handler.delete_transaction(payload)
+            if success_delete:
+                return jsonify({"msg": "ok"})
+            else:
+                return jsonify({"msg": "Error deleting transaction"}), 500
+        else:
+            return jsonify({"msg": "bad request"}), 400
 
 
 @app.route("/dashboard", methods=["POST"])

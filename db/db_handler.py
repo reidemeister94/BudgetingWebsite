@@ -3,7 +3,7 @@ from typing import List
 import pathlib
 import os
 from hashlib import sha256
-from dateutil import parser
+import dateparser
 import sys
 
 curr_dir = str(pathlib.Path(__file__).parent.resolve())
@@ -77,6 +77,16 @@ class DBHandler:
         result = cursor.execute(db_queries.get_user_previsions, [username]).fetchall()
         return result
 
+    def is_transaction_in_db(self, id_transaction, username):
+        db_conn = self.get_db_connection()
+        cursor = db_conn.cursor()
+        result = cursor.execute(
+            db_queries.check_transaction_in_db, [id_transaction, username]
+        ).fetchall()
+        if len(result) == 1:
+            return True
+        return False
+
     def get_user_categories(self, cursor, username):
         if cursor is None:
             db_conn = self.get_db_connection()
@@ -89,8 +99,8 @@ class DBHandler:
         cursor = db_conn.cursor()
         user_info = self.get_user_info(cursor, username)
         if start_date is not None and end_date is not None:
-            start_date = parser.parse(start_date)
-            end_date = parser.parse(end_date)
+            start_date = dateparser.parse(start_date)
+            end_date = dateparser.parse(end_date)
             user_transactions = db_queries.get_user_transactions_date_range
             args = [username, start_date, end_date]
         else:

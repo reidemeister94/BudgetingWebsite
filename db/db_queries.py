@@ -1,3 +1,6 @@
+from app import is_transaction_in_db
+
+
 get_user_transactions_date_range = (
     "SELECT * FROM ledger WHERE account_name=? AND transaction_date BETWEEN ? AND ?"
 )
@@ -5,6 +8,8 @@ get_user_transactions = "SELECT * FROM ledger WHERE account_name=?"
 get_user_info = "SELECT id,username,starting_balance FROM user where username=?"
 get_user_previsions = "SELECT * FROM prevision where account_name=?"
 get_user_categories = "SELECT * FROM category where account_name=?"
+
+check_transaction_in_db = "SELECT * FROM ledger WHERE id=? AND account_name=?"
 
 
 set_user_balance = "UPDATE user SET starting_balance=? WHERE username=?"
