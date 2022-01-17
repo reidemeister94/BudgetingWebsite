@@ -17,7 +17,7 @@ Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 
 Vue.config.productionTip = false;
-Vue.prototype.$apiEndpoint = 'http://192.168.188.24:4794/'
+Vue.prototype.$apiEndpoint = 'http://127.0.0.1:4794/'
 
 
 new Vue({
