@@ -21,7 +21,7 @@ insert_prevision = (
     "INSERT INTO prevision (category,account_name,predicted_amount) VALUES (?,?,?)"
 )
 
-
+update_starting_balance = "UPDATE user SET starting_balance=? WHERE username=?"
 update_transaction = "UPDATE ledger SET transaction_date=?,amount=?,category=?,transaction_type=?,transaction_description=? WHERE id=?"
 update_category = "UPDATE category SET category_name=?,category_type=? WHERE id=?"
 update_prevision = "UPDATE prevision SET category=?,predicted_amount=? WHERE id=?"

@@ -222,12 +222,34 @@ def update_delete_transaction(id):
             return jsonify({"msg": "bad request"}), 400
 
 
+@app.route("/user", methods=["PUT"])
+@jwt_required()
+def update_user_starting_balance():
+    username = get_jwt_identity()
+    user_exists = db_handler.check_user_exists(username)
+    if user_exists:
+        if (
+            request.json is None
+            or "starting_balance" not in request.json
+            or not request.json["starting_balance"].isdigit()
+            or int(request.json["starting_balance"]) < 0
+        ):
+            return jsonify({"msg": "bad request"}), 400
+        starting_balance = int(request.json["starting_balance"])
+        success = db_handler.update_starting_balance(username, starting_balance)
+        if success:
+            return jsonify({"msg": "starting balance updated correctly"})
+        else:
+            return jsonify({"msg": "something went wrong"}), 500
+    else:
+        return jsonify({"msg": "bad request"}), 400
+
+
 @app.route("/dashboard", methods=["POST"])
 @jwt_required()
 def dashboard():
     username = get_jwt_identity()
     if username:
-        # print(f"IDENTITY USER: {username}")
         if request.json is None:
             return jsonify({"user_history": db_handler.get_user_history(username)})
         start_date = request.json.get("start_date", None)
@@ -240,7 +262,7 @@ def dashboard():
             return jsonify(user_history)
         except Exception as e:
             print(str(e))
-            return jsonify({"msg": "something went wrong"}), 400
+            return jsonify({"msg": "something went wrong"}), 500
     else:
         return jsonify({"msg": "not authorized"}), 401
 
@@ -266,9 +288,7 @@ def login():
         return jsonify({"msg": "bad username or password"}), 401
     # additional_claims = {"username": username}
     # access_token = create_access_token(username, additional_claims=additional_claims)
-    access_token = create_access_token(
-        username, expires_delta=datetime.timedelta(minutes=30)
-    )
+    access_token = create_access_token(username, expires_delta=False)
     return jsonify(access_token=access_token)
 
 

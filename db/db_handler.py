@@ -1,3 +1,4 @@
+from mimetypes import init
 import sqlite3
 from typing import List
 import pathlib
@@ -164,6 +165,18 @@ class DBHandler:
             return False
 
     ### UPDATE METHODS
+    def update_starting_balance(self, username, starting_balance):
+        try:
+            db_conn = self.get_db_connection()
+            cursor = db_conn.cursor()
+            cursor.execute(
+                db_queries.update_starting_balance, [starting_balance, username]
+            )
+            db_conn.commit()
+            db_conn.close()
+            return True
+        except:
+            return False
 
     def update_transaction(self, transaction_data):
         try:
