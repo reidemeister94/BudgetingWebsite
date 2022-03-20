@@ -7,16 +7,38 @@ export default {
     name: 'Dashboard',
     data() {
         return {
+            edit: null,
             username: '',
             request_config: '',
             current_balance: 0,
             user_info: {},
             user_categories: [],
             user_previsions: [],
-            user_transactions: []
+            user_transactions: [],
+            transaction_fields: [{ label: "Amount", key: "amount" },
+                { label: "Category", key: "category" },
+                { label: "Date", key: "transaction_date" },
+                { label: "Description", key: "transaction_description" },
+                {
+                    key: 'actions',
+                    label: 'Actions'
+                }
+            ]
         };
     },
+    computed: {
+        rows() {
+            return this.user_transactions.length
+        }
+    },
+    // watch: {
+    //     this.current_amount: this.computeCurrentBalance();
+    // },
     methods: {
+        onEdit(id) {
+            this.edit = this.edit !== id ? id : null;
+        },
+        onDelete(id) {},
         getUserDashboard() {
             // get token from localstorage
             let token = common.getStorageUserToken();
@@ -52,9 +74,10 @@ export default {
                 // console.log("DECODED USERNAME: " + JSON.stringify(this.username));
             } catch (error) {
                 console.log(error)
-                    // this.$router.push("/");
-                    // return error in production env
-                    // console.log(error, 'Error decoding token');
+                common.logUserOut()
+                this.$router.push("/");
+                // return error in production env
+                // console.log(error, 'Error decoding token');
             }
         },
         computeCurrentBalance() {
